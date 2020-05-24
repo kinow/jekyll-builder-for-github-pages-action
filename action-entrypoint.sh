@@ -69,8 +69,12 @@ function main {
     # Execute pre-build commands specified by the user.
     [ ! -z "$INPUT_PRE_BUILD_COMMANDS" ] && eval "$INPUT_PRE_BUILD_COMMANDS"
 
+    echo "EXECUTED PRE BUILD!"
+
     # Make sure we have permission. Needed to create `.jekyll-cache/`.
     [ "jekyll" != $(stat -c '%U' .) ] && chown jekyll .
+
+    echo "ABOUT TO CHECK GITHUB PAGES GEM"
 
     # Check for GitHub Pages requirements. If the `github-pages` Gem
     # is used, some additional environment variables need to be set.
@@ -82,11 +86,17 @@ function main {
         export PAGES_REPO_NWO="${PAGES_REPO_NWO:-$GITHUB_REPOSITORY}"
     fi
 
+    echo "ABOUT TO RUN JEKYLL BUILD!"
+
     # Execute the original image's own entrypoint.
     /usr/jekyll/bin/entrypoint jekyll build -d "$JEKYLL_DATA_DIR" "$INPUT_JEKYLL_BUILD_OPTS"
 
+    echo "ALL GOOD! EXECUTE POST BUILD COMMANDS!"
+
     # Execute post-build commands specified by the user.
     [ ! -z "$INPUT_POST_BUILD_COMMANDS" ] && eval "$INPUT_POST_BUILD_COMMANDS"
+
+    echo "CONTINUE WITH SETUP BUILD..."
 
     setup_build_repo
 
